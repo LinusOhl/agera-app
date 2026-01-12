@@ -4,16 +4,16 @@ import { defineConfig } from "vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-	server: {
-		port: 3001,
-	},
-	plugins: [
-		tsConfigPaths(),
-		tanstackStart(),
-		viteReact({
-			babel: {
-				plugins: ["babel-plugin-react-compiler"],
-			},
-		}),
-	],
+  server: {
+    port: 3000,
+  },
+  plugins: [
+    tsConfigPaths(),
+    tanstackStart(),
+    viteReact({
+      babel: {
+        plugins: ["babel-plugin-react-compiler"],
+      },
+    }),
+  ],
 });
