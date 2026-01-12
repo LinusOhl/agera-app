@@ -12,43 +12,49 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 import { theme } from "../configs/theme";
+import { AuthProvider } from "../contexts/AuthContext";
 
 import "@mantine/core/styles.css";
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
-  {
-    head: () => ({
-      meta: [
-        {
-          charSet: "utf-8",
-        },
-        {
-          name: "viewport",
-          content: "width=device-width, initial-scale=1",
-        },
-        {
-          title: "Start",
-        },
-      ],
-      links: [
-        {
-          rel: "preconnect",
-          href: "https://fonts.googleapis.com",
-        },
-        {
-          rel: "preconnect",
-          href: "https://fonts.gstatic.com",
-          crossOrigin: "",
-        },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap",
-        },
-      ],
-    }),
-    component: RootComponent,
-  },
-);
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
+  // beforeLoad: async () => {
+  //   console.log("beforeLoad fired (fetching access token)");
+  //   const user = await getCurrentUserFn();
+  //   return { user };
+  // },
+  head: () => ({
+    meta: [
+      {
+        charSet: "utf-8",
+      },
+      {
+        name: "viewport",
+        content: "width=device-width, initial-scale=1",
+      },
+      {
+        title: "Start",
+      },
+    ],
+    links: [
+      {
+        rel: "preconnect",
+        href: "https://fonts.googleapis.com",
+      },
+      {
+        rel: "preconnect",
+        href: "https://fonts.gstatic.com",
+        crossOrigin: "",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Parkinsans:wght@300..800&display=swap",
+      },
+    ],
+  }),
+  component: RootComponent,
+});
 
 function RootComponent() {
   return (
@@ -58,10 +64,6 @@ function RootComponent() {
   );
 }
 
-function Providers({ children }: { children: ReactNode }) {
-  return <MantineProvider theme={theme}>{children}</MantineProvider>;
-}
-
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
@@ -69,7 +71,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <AuthProvider>
+          <MantineProvider theme={theme}>{children}</MantineProvider>
+        </AuthProvider>
 
         <TanStackRouterDevtools position="bottom-right" />
         <ReactQueryDevtools buttonPosition="bottom-left" />
