@@ -19,11 +19,6 @@ import "@mantine/core/styles.css";
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
-  // beforeLoad: async () => {
-  //   console.log("beforeLoad fired (fetching access token)");
-  //   const user = await getCurrentUserFn();
-  //   return { user };
-  // },
   head: () => ({
     meta: [
       {
