@@ -44,7 +44,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
         const result = (await response.json()) as BaseResponse<User>;
-        // console.log("refresh return result:", result);
 
         setUser(result.data);
         setIsLoading(false);
@@ -57,6 +56,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     initializeAuth();
   }, []);
+
+  if (isLoading) {
+    return <Loader color="dark" />;
+  }
 
   const login = async (email: string, password: string) => {
     const response = await fetch(`${BASE_URL_LOCAL}/auth/login`, {
@@ -73,7 +76,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const result = (await response.json()) as BaseResponse<User>;
-    // console.log("login return result:", result);
     setUser(result.data);
   };
 
@@ -82,10 +84,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     login,
   };
-
-  // if (isLoading) {
-  //   return <Loader />;
-  // }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
