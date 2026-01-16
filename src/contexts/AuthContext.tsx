@@ -1,3 +1,4 @@
+import { Loader } from "@mantine/core";
 import {
   createContext,
   type ReactNode,
@@ -5,28 +6,35 @@ import {
   useEffect,
   useState,
 } from "react";
+import { BASE_URL_LOCAL } from "../helpers";
 
 export interface AuthContext {
-  accessToken: string | null;
+  user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
 }
 
-type RefreshResponseType = {
+type BaseResponse<T> = {
   status: string;
-  data: string;
+  data: T;
+};
+
+type User = {
+  id: string;
+  email: string;
+  firstName: string;
 };
 
 const AuthContext = createContext<AuthContext | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/auth/refresh", {
+        const response = await fetch(`${BASE_URL_LOCAL}/auth/refresh`, {
           method: "GET",
           credentials: "include",
         });
@@ -35,12 +43,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           throw new Error("Failed to refresh access token.");
         }
 
-        const data = (await response.json()) as RefreshResponseType;
+        const result = (await response.json()) as BaseResponse<User>;
+        // console.log("refresh return result:", result);
 
-        setAccessToken(data.data);
+        setUser(result.data);
         setIsLoading(false);
       } catch (error) {
-        setAccessToken(null);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -49,12 +58,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeAuth();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   const login = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:3001/api/auth/login", {
+    const response = await fetch(`${BASE_URL_LOCAL}/auth/login`, {
       method: "POST",
       body: JSON.stringify({
         email,
@@ -67,15 +72,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    const data = await response.json();
-    setAccessToken(data.data);
+    const result = (await response.json()) as BaseResponse<User>;
+    // console.log("login return result:", result);
+    setUser(result.data);
   };
 
   const value: AuthContext = {
-    accessToken,
+    user,
     isLoading,
     login,
   };
+
+  // if (isLoading) {
+  //   return <Loader />;
+  // }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
