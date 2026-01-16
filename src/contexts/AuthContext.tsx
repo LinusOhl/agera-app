@@ -1,4 +1,4 @@
-import { Loader } from "@mantine/core";
+import { Center, Loader } from "@mantine/core";
 import {
   createContext,
   type ReactNode,
@@ -58,7 +58,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   if (isLoading) {
-    return <Loader color="dark" />;
+    return (
+      <Center maw={"100%"} h={"100vh"}>
+        <Loader color="dark" />
+      </Center>
+    );
   }
 
   const login = async (email: string, password: string) => {
