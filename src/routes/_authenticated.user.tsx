@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "../contexts/AuthContext";
 
 export const Route = createFileRoute("/_authenticated/user")({
-  component: Component,
+  component: RouteComponent,
 });
 
-function Component() {
+function RouteComponent() {
   const { user } = useAuth();
 
   return (

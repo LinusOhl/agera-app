@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "../contexts/AuthContext";
 
 export const Route = createFileRoute("/login")({
-  component: Login,
+  component: RouteComponent,
 });
 
-function Login() {
+function RouteComponent() {
   const { login } = useAuth();
 
   return (
@@ -19,7 +19,7 @@ function Login() {
           await login("johnny@doe.com", "johnny");
         }}
       >
-        Sign up
+        Log in
       </button>
     </div>
   );
