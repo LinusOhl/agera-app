@@ -11,6 +11,7 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
+import { isNotEmpty, useForm } from "@mantine/form";
 import { IconArrowNarrowLeft } from "@tabler/icons-react";
 import {
   createFileRoute,
@@ -34,30 +35,29 @@ function RouteComponent() {
     to: "/",
   });
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = async () => {
-    if (!email.trim()) {
-      return;
-    }
+  const form = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validate: {
+      email: isNotEmpty(),
+      password: isNotEmpty(),
+    },
+  });
 
-    if (!password.trim()) {
-      return;
-    }
-
+  const handleLogin = async (values: typeof form.values) => {
     try {
-      await login(email, password);
+      await login(values.email, values.password);
 
       navigate({ to: "/user" });
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
       }
-    } finally {
-      setEmail("");
-      setPassword("");
     }
   };
 
@@ -80,22 +80,26 @@ function RouteComponent() {
               </Alert>
             )}
 
-            <TextInput
-              label={"Email"}
-              placeholder="john@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-            />
+            <form onSubmit={form.onSubmit(handleLogin)}>
+              <TextInput
+                key={form.key("email")}
+                label={"Email"}
+                placeholder="john@email.com"
+                mb={"md"}
+                {...form.getInputProps("email")}
+              />
 
-            <PasswordInput
-              label="Password"
-              value={password}
-              onChange={(e) => setPassword(e.currentTarget.value)}
-            />
+              <PasswordInput
+                key={form.key("password")}
+                label="Password"
+                mb={"md"}
+                {...form.getInputProps("password")}
+              />
 
-            <Button variant="outline" color="dark" onClick={handleLogin}>
-              Log in
-            </Button>
+              <Button type="submit" variant="outline" color="dark" fullWidth>
+                Log in
+              </Button>
+            </form>
           </Stack>
         </Card>
 
