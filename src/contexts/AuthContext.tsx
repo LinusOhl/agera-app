@@ -76,7 +76,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     if (!response.ok) {
-      return;
+      const res = await response.text();
+      throw new Error(`${res}`, {
+        cause: `${response.status} ${response.statusText}`,
+      });
     }
 
     const result = (await response.json()) as BaseResponse<User>;
