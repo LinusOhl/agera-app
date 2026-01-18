@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(result.data);
         setIsLoading(false);
       } catch (error) {
-        console.error("error:", error);
+        // console.error("error:", error);
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -63,14 +63,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     initializeAuth();
   }, []);
-
-  if (isLoading) {
-    return (
-      <Center maw={"100%"} h={"100vh"}>
-        <Loader color="dark" />
-      </Center>
-    );
-  }
 
   const signup = async (userData: UserSignUpData) => {
     const response = await fetch(`${BASE_URL_LOCAL}/auth/signup`, {
@@ -90,24 +82,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = async (email: string, password: string) => {
-    const response = await fetch(`${BASE_URL_LOCAL}/auth/login`, {
-      method: "POST",
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-      credentials: "include",
-    });
+    setIsLoading(true);
 
-    if (!response.ok) {
-      const res = await response.text();
-      throw new Error(`${res}`, {
-        cause: `${response.status} ${response.statusText}`,
+    try {
+      const response = await fetch(`${BASE_URL_LOCAL}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+        credentials: "include",
       });
-    }
 
-    const result = (await response.json()) as BaseResponse<User>;
-    setUser(result.data);
+      if (!response.ok) {
+        const res = await response.text();
+        throw new Error(`${res}`, {
+          cause: `${response.status} ${response.statusText}`,
+        });
+      }
+
+      const result = (await response.json()) as BaseResponse<User>;
+      setUser(result.data);
+    } catch (error) {
+      //
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const value: AuthContext = {
@@ -116,6 +116,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     login,
     signup,
   };
+
+  if (isLoading) {
+    return (
+      <Center maw={"100%"} h={"100vh"}>
+        <Loader color="dark" />
+      </Center>
+    );
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
