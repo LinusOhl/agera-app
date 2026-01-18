@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import { MantineProvider } from "@mantine/core";
+import { Container, MantineProvider } from "@mantine/core";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
@@ -67,7 +67,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body>
         <MantineProvider theme={theme}>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <Container strategy="grid">{children}</Container>
+          </AuthProvider>
         </MantineProvider>
 
         <TanStackRouterDevtools position="bottom-right" />
