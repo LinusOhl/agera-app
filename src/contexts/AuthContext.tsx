@@ -13,6 +13,7 @@ export interface AuthContext {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (userData: UserSignUpData) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 type BaseResponse<T> = {
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(result.data);
         setIsLoading(false);
       } catch (error) {
-        // console.error("error:", error);
+        // TODO: handle error
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -82,9 +83,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = async (email: string, password: string) => {
-    setIsLoading(true);
-
     try {
+      setIsLoading(true);
+
       const response = await fetch(`${BASE_URL_LOCAL}/auth/login`, {
         method: "POST",
         body: JSON.stringify({
@@ -104,7 +105,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const result = (await response.json()) as BaseResponse<User>;
       setUser(result.data);
     } catch (error) {
-      //
+      // TODO: handle error
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch(`${BASE_URL_LOCAL}/auth/logout`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const res = await response.text();
+        throw new Error(`${res}`, {
+          cause: `${response.status} ${response.statusText}`,
+        });
+      }
+
+      setUser(null);
+    } catch (error) {
+      // TODO: handle error
     } finally {
       setIsLoading(false);
     }
@@ -115,6 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     login,
     signup,
+    logout,
   };
 
   if (isLoading) {
