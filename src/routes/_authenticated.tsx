@@ -12,11 +12,5 @@ function RouteComponent() {
     return <Navigate to="/login" />;
   }
 
-  return (
-    <div>
-      <p>Hello</p>
-
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }
