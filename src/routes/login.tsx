@@ -2,8 +2,6 @@ import {
   Alert,
   Button,
   Card,
-  Center,
-  Flex,
   PasswordInput,
   Stack,
   Text,
@@ -62,61 +60,63 @@ function RouteComponent() {
   };
 
   return (
-    <Center maw={"100%"} h={"100vh"}>
-      <Flex direction={"column"}>
-        <Title order={1} mb={"xl"} fz={96} c={"dark"}>
-          agera
-        </Title>
+    <Stack h={"100vh"} p={"xs"} gap={"xl"} justify="center">
+      <Title
+        order={1}
+        fz={96}
+        c={"dark"}
+        styles={{ root: { textAlign: "center" } }}
+      >
+        agera
+      </Title>
 
-        <Card padding={"lg"} radius={"md"} shadow="md" mb={"xl"}>
-          <Text fz={"lg"} fw={500} mb={"lg"} c={"dark"}>
-            Log in to manage your tasks
-          </Text>
+      <Card padding={"lg"} radius={"md"} shadow="md">
+        <Text fz={"lg"} fw={500} mb={"lg"} c={"dark"}>
+          Log in to manage your tasks
+        </Text>
 
-          <Stack gap={"md"}>
-            {error && (
-              <Alert variant="light" color="red">
-                {error}
-              </Alert>
-            )}
+        <Stack gap={"md"}>
+          {error && (
+            <Alert variant="light" color="red">
+              {error}
+            </Alert>
+          )}
 
-            <form onSubmit={form.onSubmit(handleLogin)}>
-              <TextInput
-                key={form.key("email")}
-                label={"Email"}
-                placeholder="john@email.com"
-                mb={"md"}
-                {...form.getInputProps("email")}
-              />
+          <form onSubmit={form.onSubmit(handleLogin)}>
+            <TextInput
+              key={form.key("email")}
+              label="Email"
+              mb={"md"}
+              {...form.getInputProps("email")}
+            />
 
-              <PasswordInput
-                key={form.key("password")}
-                label="Password"
-                mb={"md"}
-                {...form.getInputProps("password")}
-              />
+            <PasswordInput
+              key={form.key("password")}
+              label="Password"
+              mb={"md"}
+              {...form.getInputProps("password")}
+            />
 
-              <Button type="submit" variant="outline" color="dark" fullWidth>
-                Log in
-              </Button>
-            </form>
-          </Stack>
-        </Card>
+            <Button type="submit" variant="outline" color="dark" fullWidth>
+              Log in
+            </Button>
+          </form>
+        </Stack>
+      </Card>
 
-        <Button
-          variant="transparent"
-          color="dark"
-          size="compact-sm"
-          leftSection={<IconArrowNarrowLeft color={theme.colors.dark[6]} />}
-          style={{
-            alignSelf: "flex-start",
-          }}
-          component={Link}
-          {...indexLinkOptions}
-        >
-          Go back
-        </Button>
-      </Flex>
-    </Center>
+      <Button
+        variant="transparent"
+        color="dark"
+        size="compact-sm"
+        leftSection={<IconArrowNarrowLeft color={theme.colors.dark[6]} />}
+        style={{
+          alignSelf: "flex-start",
+        }}
+        component={Link}
+        {...indexLinkOptions}
+      >
+        Go back
+      </Button>
+    </Stack>
   );
 }
