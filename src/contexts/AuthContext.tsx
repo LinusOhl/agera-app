@@ -12,6 +12,7 @@ export interface AuthContext {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  signup: (userData: UserSignUpData) => Promise<void>;
 }
 
 type BaseResponse<T> = {
@@ -21,8 +22,13 @@ type BaseResponse<T> = {
 
 type User = {
   id: string;
-  email: string;
   firstName: string;
+  email: string;
+};
+
+type UserSignUpData = Omit<User, "id"> & {
+  lastName: string;
+  password: string;
 };
 
 const AuthContext = createContext<AuthContext | null>(null);
@@ -48,6 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(result.data);
         setIsLoading(false);
       } catch (error) {
+        console.error("error:", error);
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -64,6 +71,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       </Center>
     );
   }
+
+  const signup = async (userData: UserSignUpData) => {
+    const response = await fetch(`${BASE_URL_LOCAL}/auth/signup`, {
+      method: "POST",
+      body: JSON.stringify(userData),
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      const res = await response.text();
+      throw new Error(`${res}`, {
+        cause: `${response.status} ${response.statusText}`,
+      });
+    }
+
+    return;
+  };
 
   const login = async (email: string, password: string) => {
     const response = await fetch(`${BASE_URL_LOCAL}/auth/login`, {
@@ -90,6 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     isLoading,
     login,
+    signup,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
