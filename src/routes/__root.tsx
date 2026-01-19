@@ -12,13 +12,18 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type { ReactNode } from "react";
 import { theme } from "../config/theme";
-import { AuthProvider } from "../contexts/AuthContext";
 
 import "@mantine/core/styles.css";
+import { getCurrentUserFn } from "../lib/auth-server-func";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
+  beforeLoad: async () => {
+    const user = await getCurrentUserFn();
+
+    return { user };
+  },
   head: () => ({
     meta: [
       {
@@ -67,9 +72,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
       <body>
         <MantineProvider theme={theme}>
-          <AuthProvider>
-            <Container strategy="grid">{children}</Container>
-          </AuthProvider>
+          <Container strategy="grid">{children}</Container>
         </MantineProvider>
 
         <TanStackRouterDevtools position="bottom-right" />

@@ -1,37 +1,27 @@
-import { Button } from "@mantine/core";
+import { Button, Image } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
+import { signOut } from "../../lib/auth-client";
 
 export const Route = createFileRoute("/_authenticated/user")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { user } = Route.useRouteContext();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  const [error, setError] = useState<string | null>(null);
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-
-      navigate({ to: "/" });
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
-    }
-  };
 
   return (
     <div>
-      <p>Hello {user?.firstName}</p>
+      <p>User ID: {user.id}</p>
 
-      {error && <p>{error}</p>}
+      <Image src={user.image} alt="Avatar" />
 
-      <Button onClick={handleLogout}>Log out</Button>
+      <Button
+        color="dark"
+        onClick={() => signOut({}, { onSuccess: () => navigate({ to: "/" }) })}
+      >
+        Sign out
+      </Button>
     </div>
   );
 }

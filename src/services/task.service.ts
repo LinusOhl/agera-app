@@ -1,9 +1,9 @@
-import { BASE_URL_LOCAL } from "../helpers";
+import { BASE_URL_API_LOCAL } from "../helpers";
 import type { Task } from "../types/task.types";
 
 export const fetchTasks = async () => {
   try {
-    const response = await fetch(`${BASE_URL_LOCAL}/tasks`, {
+    const response = await fetch(`${BASE_URL_API_LOCAL}/tasks`, {
       method: "GET",
       credentials: "include",
     });

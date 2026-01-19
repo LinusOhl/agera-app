@@ -1,16 +1,14 @@
-import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
-import { useAuth } from "../contexts/AuthContext";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
+  beforeLoad: async ({ context }) => {
+    if (!context.user) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { user } = useAuth();
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-
   return <Outlet />;
 }
